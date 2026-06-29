@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARR Manager Transport Marfă — Răspunsuri Esențiale</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --card: #ffffff;
+  --border: #e0ddd6;
+  --text: #1a1a18;
+  --muted: #6b6a66;
+  --accent: #1a5fa8;
+  --accent-bg: #e8f0fb;
+  --warn: #8a5700;
+  --warn-bg: #fef3dc;
+  --green: #1a6b30;
+  --green-bg: #e6f5ea;
+  --red: #8a1a1a;
+  --red-bg: #fbeaea;
+  --tag-bg: #eceae4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+header { background: var(--accent); color: #fff; padding: 1.25rem 1rem; text-align: center; position: sticky; top: 0; z-index: 100; }
+header h1 { font-size: 16px; font-weight: 600; }
+header p { font-size: 12px; opacity: .8; margin-top: 3px; }
+.search-bar { padding: .75rem 1rem; background: #fff; border-bottom: 1px solid var(--border); }
+.search-bar input { width: 100%; padding: .6rem .9rem; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg); color: var(--text); }
+.search-bar input:focus { outline: none; border-color: var(--accent); }
+.tabs { display: flex; overflow-x: auto; gap: 6px; padding: .6rem 1rem; background: #fff; border-bottom: 1px solid var(--border); -webkit-overflow-scrolling: touch; }
+.tabs button { white-space: nowrap; padding: .45rem .9rem; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); color: var(--muted); font-size: 13px; cursor: pointer; flex-shrink: 0; }
+.tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.container { padding: .75rem 1rem 3rem; max-width: 720px; margin: 0 auto; }
+.section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 1.25rem 0 .5rem; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: .75rem; overflow: hidden; }
+.card-header { padding: .9rem 1rem .75rem; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.card-header:active { background: var(--bg); }
+.q-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+.freq { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
+.freq-6 { background: #fbeaea; color: var(--red); }
+.freq-5 { background: #fef3dc; color: var(--warn); }
+.freq-4 { background: var(--accent-bg); color: var(--accent); }
+.freq-3 { background: var(--green-bg); color: var(--green); }
+.q-text { font-size: 14px; font-weight: 500; line-height: 1.45; flex: 1; }
+.chevron { font-size: 18px; color: var(--muted); flex-shrink: 0; transition: transform .2s; margin-top: 2px; }
+.card.open .chevron { transform: rotate(180deg); }
+.card-body { display: none; padding: 0 1rem 1rem; border-top: 1px solid var(--border); }
+.card.open .card-body { display: block; }
+.card-body ul { padding-left: 1.25rem; margin-top: .75rem; }
+.card-body li { margin-bottom: .4rem; font-size: 14px; }
+.card-body p { font-size: 14px; margin-top: .75rem; }
+.card-body strong { color: var(--accent); }
+.note { background: var(--warn-bg); border-left: 3px solid #f0a800; padding: .6rem .9rem; border-radius: 0 6px 6px 0; margin-top: .75rem; font-size: 13px; color: var(--warn); }
+.tip { background: var(--green-bg); border-left: 3px solid #2a9a4a; padding: .6rem .9rem; border-radius: 0 6px 6px 0; margin-top: .75rem; font-size: 13px; color: var(--green); }
+.hidden { display: none !important; }
+.no-results { text-align: center; padding: 2rem; color: var(--muted); font-size: 14px; }
+table { width: 100%; border-collapse: collapse; margin-top: .75rem; font-size: 13px; }
+th { background: var(--accent-bg); color: var(--accent); padding: .5rem .6rem; text-align: left; font-weight: 600; }
+td { padding: .45rem .6rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ARR — Manager Transport Marfă</h1>
+  <p>Răspunsuri esențiale · Subiecte frecvente</p>
+</header>
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Caută (ex: CEMT, CMR, arimarea...)" oninput="filterCards()">
+</div>
+<div class="tabs">
+  <button class="active" onclick="filterTab(this,'all')">Toate</button>
+  <button onclick="filterTab(this,'critic')">🔴 Critice 5–6×</button>
+  <button onclick="filterTab(this,'important')">🟡 Importante 3–4×</button>
+  <button onclick="filterTab(this,'licenta')">Licență ARR</button>
+  <button onclick="filterTab(this,'cmr')">CMR</button>
+  <button onclick="filterTab(this,'arimarе')">Arimarea</button>
+  <button onclick="filterTab(this,'financiar')">Financiar</button>
+  <button onclick="filterTab(this,'tahograf')">Tahograf/561</button>
+</div>
+
+<div class="container" id="container">
+
+<div class="section-title">🔴 Critice — apar în 5–6 studii de caz</div>
+
+<!-- CEMT -->
+<div class="card" data-tags="critic cemt" id="c-cemt">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5–6/6 studii</span></div>
+      <div class="q-text">Autorizație CEMT — în ce situații NU este valabilă? (minim 5)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Nu are înscrisă <strong>denumirea și/sau adresa</strong> transportatorului</li>
+      <li>Nu este însoțită de <strong>carnetele de drum</strong> completate corespunzător</li>
+      <li>Prezintă <strong>ștersături</strong>, astfel încât elementele de identificare sunt ilizibile</li>
+      <li>Nu are <strong>data eliberării</strong> sau <strong>data valabilității</strong></li>
+      <li>Nu are <strong>ștampila și/sau semnătura</strong> organului emitent</li>
+      <li>Nu este însoțită de <strong>certificatul de conformitate</strong> cu tipul autorizației</li>
+      <li>Este utilizată pentru <strong>mai mult de 3 curse consecutive cu încărcătură</strong> între state CEMT fără întoarcere</li>
+      <li><strong>Nu se respectă obligativitatea</strong> utilizării între punctul de încărcare și cel de descărcare</li>
+    </ul>
+    <div class="note">Atenție: întrebarea cere minim 5. Memorează primele 6 de sus.</div>
+  </div>
+</div>
+
+<!-- ARIMAREA -->
+<div class="card" data-tags="critic arimarе" id="c-arim">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5/6 studii</span></div>
+      <div class="q-text">Arimarea mărfurilor — tipuri de ancorare (rotite între studii)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Tip ancorare</th><th>Definiție</th></tr>
+      <tr><td><strong>Elastică</strong></td><td>Legarea încărcăturii de platformă, care permite doar mișcări reduse în funcție de flexibilitatea sistemului de ancorare</td></tr>
+      <tr><td><strong>Cu jumătate de buclă</strong></td><td>Trecerea corzii transversal pe piesele lungi de încărcătură; cel puțin 3 sisteme, fiecare începe de la un punct de ancorare din apropierea vehiculului, trece pe sub încărcătură și revine la un punct apropiat</td></tr>
+      <tr><td><strong>În paralel</strong></td><td>Conectarea celor 8 puncte de ancorare de pe vehicul cu cele 8 puncte de pe încărcătură; sistemele sunt cuplate câte două, în paralel, cu lungimi egale</td></tr>
+      <tr><td><strong>Pe diagonală</strong></td><td>Conectarea unui punct de ancorare de pe încărcătură cu un punct de pe platformă, pe diagonală</td></tr>
+    </table>
+    <div class="tip">Fiecare studiu folosește un tip diferit — dacă apare "ancorare", identifică rapid ce tip se cere.</div>
+  </div>
+</div>
+
+<!-- CAPACITATE FINANCIARA -->
+<div class="card" data-tags="critic financiar" id="c-fin">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5/6 studii</span></div>
+      <div class="q-text">Capacitate financiară — elemente din bilanț (minim 5)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li><strong>Capital propriu</strong></li>
+      <li><strong>Aporturi de capital</strong></li>
+      <li><strong>Prime de capital</strong></li>
+      <li><strong>Rezerve</strong></li>
+      <li><strong>Rezerve din reevaluare</strong></li>
+      <li><strong>Rezultatul reportat</strong></li>
+      <li><strong>Rezultatul exercițiului financiar</strong></li>
+    </ul>
+    <div class="note">Prag: 9.000 EUR primul vehicul + 5.000 EUR fiecare următor. Dacă nu mai e îndeplinită: predare copii conforme la ARR în <strong>10 zile</strong>.</div>
+  </div>
+</div>
+
+<!-- DOCUMENTE SEDIU -->
+<div class="card" data-tags="critic licenta" id="c-sediu-doc">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5/6 studii</span></div>
+      <div class="q-text">Documente obligatorii la sediu (minim 5)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li><strong>Licența comunitară</strong> — originalul</li>
+      <li><strong>Cărțile de identitate ale vehiculelor</strong> — original pentru proprietate, copie pt leasing/închiriere</li>
+      <li><strong>CMR</strong> — pentru anul în curs și anul precedent</li>
+      <li><strong>Avize medicale și psihologice</strong> — conducători auto + manager transport</li>
+      <li><strong>Toate documentele din care reiese menținerea condițiilor de acces la profesie</strong></li>
+      <li><strong>Documente privind întreținerea vehiculelor</strong> — păstrate 18 luni</li>
+      <li>Tichetele de cântar pentru bunuri divizibile (an curent + precedent)</li>
+      <li>Autorizații speciale de transport (AST) pentru mărfuri indivizibile</li>
+      <li>Documente angajare conducători auto în condiții legale</li>
+    </ul>
+    <div class="note">Documentele de întreținere: conținut minim — sesizările șoferilor, rezoluția managerului, modul de soluționare, documente justificative. Se păstrează <strong>18 luni</strong>.</div>
+  </div>
+</div>
+
+<!-- CMR DATE FACULTATIVE -->
+<div class="card" data-tags="critic cmr" id="c-cmr-fac">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5/6 studii</span></div>
+      <div class="q-text">CMR — date pe care expeditorul le poate menționa (facultative, minim 4–6)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p><strong>Date obligatorii</strong> (expeditor pune în CMR):</p>
+    <ul>
+      <li>Denumire/adresă expeditor</li>
+      <li>Denumire/adresă transportator</li>
+      <li>Denumire/adresă destinatar</li>
+      <li>Locul și data încărcării</li>
+      <li>Locul descărcării</li>
+      <li>Felul mărfii</li>
+      <li>Greutatea mărfii</li>
+      <li>Număr de colete</li>
+    </ul>
+    <p><strong>Date facultative</strong> (expeditorul le poate adăuga):</p>
+    <ul>
+      <li>Interzicerea transbordării</li>
+      <li>Cheltuielile pe care le ia asupra sa</li>
+      <li>Totalul sumelor de ramburs de perceput la eliberarea mărfii</li>
+      <li>Valoarea declarată a mărfii și suma reprezentând interesul special la destinație</li>
+      <li>Instrucțiunile expeditorului privind asigurarea mărfii</li>
+      <li>Termenul convenit în care transportul trebuie efectuat</li>
+      <li>Lista documentelor remise transportatorului</li>
+    </ul>
+    <div class="tip">Când se cere "în afară de cele obligatorii" = lista facultativă. Când se cere "obligatorii" = prima listă.</div>
+  </div>
+</div>
+
+<!-- TRANSPORT INDIVIZIBIL -->
+<div class="card" data-tags="critic" id="c-ast">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-5">5/6 studii</span></div>
+      <div class="q-text">Transport mărfuri indivizibile — document + condiții cumulative (minim 4)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p><strong>Documentul:</strong> Autorizație Specială de Transport (AST), eliberată de CNAIR.</p>
+    <p><strong>Tipuri AST:</strong> individuală / multiplă / periodică.</p>
+    <p><strong>Condiții cumulative pentru eliberare:</strong></p>
+    <ul>
+      <li>Masa totală să nu depășească <strong>50 tone</strong></li>
+      <li>Masa pe axe: 3,5t (ax simplu) / 6t (ax dublu) / 7t (ax triplu)</li>
+      <li>Lungimea să nu depășească cu mai mult de <strong>3 m</strong> lungimea maximă admisă</li>
+      <li>Lățimea să nu depășească <strong>3 m</strong></li>
+      <li>Să nu fie depășită <strong>înălțimea maximă admisă</strong> (4 m)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-title">🟡 Importante — apar în 3–4 studii de caz</div>
+
+<!-- BUNA REPUTATIE -->
+<div class="card" data-tags="important" id="c-reput">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Bună reputație — domenii art. 6 alin.(1) lit.a) Reg. 1071/2009 (minim 4)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li><strong>Drept comercial</strong> (fraude, înșelăciune)</li>
+      <li><strong>Legislația privind insolvența</strong></li>
+      <li><strong>Condițiile de remunerare și de muncă</strong> ale profesiei</li>
+      <li><strong>Circulația rutieră</strong></li>
+      <li><strong>Răspunderea profesională</strong></li>
+      <li><strong>Traficul cu ființe umane sau traficul de droguri</strong></li>
+    </ul>
+    <div class="note">Reabilitarea după pierderea bunei reputații: după <strong>1 an</strong>.</div>
+  </div>
+</div>
+
+<!-- LICENTA LA ARR -->
+<div class="card" data-tags="important licenta" id="c-arr-doc">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">La care agenție ARR depui și ce documente? (logica sediu vs punct de lucru)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <div class="tip"><strong>Regula de aur:</strong> Depui la ARR din județul unde se află <strong>sediul unde întreprinderea îi păstrează documentele și desfășoară activitatea administrativă și operativă</strong>, indiferent de județele punctelor de lucru sau de înregistrarea la ONRC.</div>
+    <p><strong>Documente depuse (listă completă):</strong></p>
+    <ul>
+      <li>Dovada sediului real și stabil (contract/titlu proprietate)</li>
+      <li>Document privind asigurarea întreținerii tehnice a vehiculelor</li>
+      <li>Declarație pe propria răspundere că vehiculele se întorc la centrul operațional din RO în max 8 săptămâni</li>
+      <li>Certificat de înregistrare ONRC + certificat constatator</li>
+      <li>Document privind cod TVA/impozit profit</li>
+      <li>Cazier judiciar manager de transport + declarație pe propria răspundere</li>
+      <li>Cazier judiciar al întreprinderii + declarație pe propria răspundere</li>
+      <li>Document privind capacitatea financiară (garanție bancară, poliță asigurare profesională, situații financiare anuale)</li>
+      <li>Contract de muncă / dovada angajării managerului de transport</li>
+      <li>Certificatul de competență profesională al managerului (sau recunoaștere din alt stat UE)</li>
+      <li>Copie carte identitate + certificat înmatriculare vehicule (cu ITP valabil)</li>
+    </ul>
+    <div class="note">Pentru transport mărfuri periculoase — se adaugă: dovada angajării consilierului de siguranță, decizia de numire, certificatul de atestare profesională al acestuia, lista conducătorilor auto cu certificat ADR, certificatul de agreare RAR, autorizația CNCAN (cls 7).</div>
+  </div>
+</div>
+
+<!-- INCOTERMS -->
+<div class="card" data-tags="important cmr" id="c-inco">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">INCOTERMS 2010 — momentul transferului riscului (CIP, CPT, EXW, DDP)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Termen</th><th>Momentul transferului riscului</th><th>Obligație suplimentară vânzător</th></tr>
+      <tr><td><strong>EXW</strong></td><td>De la <strong>poarta fabricii</strong> vânzătorului — cumpărătorul răspunde de tot, inclusiv export</td><td>Niciuna</td></tr>
+      <tr><td><strong>CPT</strong></td><td>Din momentul <strong>predării mărfii primului transportator</strong> (la încărcare)</td><td>Plătește transportul. Vămuire export.</td></tr>
+      <tr><td><strong>CIP</strong></td><td>Din momentul <strong>predării mărfii primului transportator</strong> (la încărcare)</td><td>Plătește transportul + <strong>încheie asigurarea</strong></td></tr>
+      <tr><td><strong>DDP</strong></td><td>Vânzătorul răspunde până la <strong>punerea mărfii la dispoziția cumpărătorului în țara importatoare</strong></td><td>Toate formalitățile incl. import</td></tr>
+    </table>
+    <div class="tip">CIP vs CPT: identice ca moment transfer risc, dar la CIP vânzătorul încheie suplimentar asigurarea.</div>
+  </div>
+</div>
+
+<!-- CARNET TIR -->
+<div class="card" data-tags="important" id="c-tir">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Carnet TIR — condiții minime de autorizare (minim 4)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Să dețină <strong>licență comunitară</strong> (sau certificat transport cont propriu)</li>
+      <li>Să aibă <strong>bonitate financiară</strong></li>
+      <li>Să cunoască <strong>prevederile Convenției TIR</strong></li>
+      <li>Să nu aibă <strong>abateri grave la legislația vamală</strong> sau fiscală</li>
+      <li>Angajament scris prin care persoana dă asigurări că va îndeplini formalitățile vamale</li>
+      <li>Angajament scris că va plăti sumele datorate dacă i se solicită de autorități</li>
+      <li>Angajament scris că permite verificarea condițiilor și cerințelor minimale</li>
+    </ul>
+    <div class="note">Revocare autorizație TIR: dacă nu a mai folosit carnet TIR în ultimele <strong>12 luni</strong>.</div>
+  </div>
+</div>
+
+<!-- CABOTAJ -->
+<div class="card" data-tags="important" id="c-cabotaj">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Cabotaj — elemente probe pentru fiecare operațiune (Reg. 1072/2009)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p><strong>Probe obligatorii pentru fiecare operațiune de cabotaj:</strong></p>
+    <ul>
+      <li>Numele, adresa și semnătura expeditorului</li>
+      <li>Numele, adresa și semnătura operatorului de transport rutier de mărfuri</li>
+      <li>Numele și adresa destinatarului + semnătura acestuia și data livrării (după livrare)</li>
+      <li>Locul și data preluării mărfurilor și locul prevăzut pentru livrare</li>
+      <li>Descrierea curentă a naturii mărfii și modul de ambalare; pt mărfuri periculoase: descriere generală, nr colete, marcaje, numere</li>
+      <li>Greutatea brută sau cantitatea mărfurilor altfel exprimată</li>
+      <li>Numerele de înmatriculare ale autovehiculului și remorcii</li>
+    </ul>
+    <div class="note"><strong>Regulă cabotaj:</strong> 1 cabotaj în 3 zile dacă a intrat fără încărcătură SAU 3 cabotaje în 7 zile dacă a intrat cu încărcătură.</div>
+  </div>
+</div>
+
+<!-- TRANZIT VAMAL -->
+<div class="card" data-tags="important" id="c-tranzit">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Sisteme de tranzit vamal UE — T1 și T2 + garanții</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Sistem</th><th>Utilizare</th></tr>
+      <tr><td><strong>T1 — Tranzit Comunitar</strong></td><td>Transport mărfuri <strong>non-comunitare</strong> (care nu se află în liberă circulație) între două puncte din cadrul UE</td></tr>
+      <tr><td><strong>T2 — Tranzit Comun</strong></td><td>Transporturi între UE și <strong>SEE</strong> (Norvegia, Elveția, Islanda) + țări care au aderat la Convenția de Tranzit Comun</td></tr>
+    </table>
+    <p><strong>Tipuri de garanții:</strong></p>
+    <ul>
+      <li><strong>Garanție individuală</strong> — acoperă valoarea totală a datoriei vamale pentru o singură cursă (calculată la cel mai mare tarif din statul de plecare)</li>
+      <li><strong>Garanție globală</strong> — acoperă mai multe curse; acoperă suma maximă a datoriei vamale și taxelor pentru o perioadă de cel puțin o săptămână</li>
+    </ul>
+  </div>
+</div>
+
+<!-- TIMP MUNCA LUCRATOR MOBIL -->
+<div class="card" data-tags="important tahograf" id="c-tmpm">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Timp de muncă lucrător mobil — componente (HGR 38/2008, minim 3)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li><strong>Conducerea autovehiculului</strong></li>
+      <li><strong>Încărcarea și descărcarea</strong> vehiculului</li>
+      <li><strong>Curățenia și întreținerea tehnic</strong> a vehiculului</li>
+      <li>Toate celelalte activități vizând <strong>siguranța vehiculului</strong>, a încărcăturii, îndeplinirea obligațiilor legale de reglementare legate direct de operațiunea de transport</li>
+      <li>Supravegherea încărcării și descărcării</li>
+      <li>Formalitățile administrative (poliție, vamă etc.)</li>
+      <li>Pregătirea documentelor de transport</li>
+      <li>Alimentarea cu carburant</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CONDITII INAINTE DE PLECARE -->
+<div class="card" data-tags="important arimarе" id="c-plecare">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Condiții verificate după încărcare, înainte de plecare — OMTI 980/2011 (minim 2)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Marfa <strong>nu împiedică conducerea</strong> în condiții de siguranță</li>
+      <li><strong>Centrul de greutate</strong> al mărfii se află cât mai jos posibil</li>
+      <li>Centrul de greutate al mărfii se află <strong>cât mai pe mijlocul vehiculului</strong></li>
+      <li>Roata de rezervă, trusa de scule, ușile, rampa sunt <strong>bine fixate</strong></li>
+      <li>Elementele de fixare a mărfii respectă condițiile: nu prezintă noduri/rupturi/deteriorări, sunt adaptate mărfii, conforme cu standardele europene</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SEDIU REAL SI STABIL -->
+<div class="card" data-tags="important licenta" id="c-sediu">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Sediu real și stabil pe teritoriul RO — condiții (minim 3)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Să aibă un sediu pe teritoriul RO în incinta căruia păstrează <strong>originalele principalelor documente de lucru</strong> (accesibil inspectorilor ISCTR)</li>
+      <li>Să organizeze activitatea parcului astfel încât vehiculele folosite în transport internațional să se întoarcă la un centru operațional din RO în termen de <strong>8 săptămâni</strong></li>
+      <li>Să fie înregistrată la <strong>ONRC</strong></li>
+      <li>Să fie supusă impozitului pe profit/venit și, după caz, să aibă <strong>cod TVA</strong></li>
+      <li>Să dispună de <strong>cel puțin un vehicul înmatriculat în RO</strong></li>
+      <li>Să desfășoare efectiv și permanent activitățile administrative și comerciale cu <strong>echipamente corespunzătoare la sediul din RO</strong></li>
+      <li>Să aibă la dispoziție un număr de vehicule și conducători auto proporțional cu volumul operațiunilor, cu locul de staționare obișnuit la un centru operațional din RO</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CMR EXONERARE -->
+<div class="card" data-tags="important cmr" id="c-cmr-exon">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">CMR — exonerare transportator (riscuri particulare, minim 3 situații)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p>Transportatorul este exonerat de răspundere dacă pierderea/avaria rezultă din riscurile particulare inerente uneia din următoarele fapte, <strong>efectuate de expeditorul mărfii, destinatarul mărfii sau persoane care acționează în contul lor</strong>:</p>
+    <ul>
+      <li><strong>Manipularea</strong> mărfii</li>
+      <li><strong>Încărcarea</strong> mărfii</li>
+      <li><strong>Stivuirea</strong> mărfii</li>
+      <li><strong>Descărcarea</strong> mărfii</li>
+    </ul>
+    <div class="note">Condiție: aceste operațiuni să fi fost efectuate de expeditor/destinatar/persoane în contul lor, nu de transportator.</div>
+  </div>
+</div>
+
+<!-- ITP RAR -->
+<div class="card" data-tags="important" id="c-itp">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">ITP — situații obligatorii de prezentare la RAR</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>La <strong>prima înmatriculare</strong></li>
+      <li>La <strong>reomologare</strong></li>
+      <li>La <strong>redobândirea certificatului de înmatriculare</strong> reținut pentru lipsă ITP sau la expirarea valabilității ITP în intervalul reținerii</li>
+      <li>Dacă ITP a fost <strong>anulat</strong> în condițiile reglementărilor RNTR11 (defecțiuni tehnice)</li>
+      <li>La autocisterne — <strong>la intervale de 1 an</strong></li>
+      <li>La vehiculele agreate pentru <strong>mărfuri periculoase</strong> — la intervalele prevăzute în legislația națională</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CONTAINER TIR -->
+<div class="card" data-tags="important" id="c-container">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Container — definiție conform Convenției TIR (minim 3 condiții)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p>Prin container (conform Convenției TIR) se înțelege un mijloc de transport (cadru, cisternă amovibilă sau alt mijloc analog) care:</p>
+    <ul>
+      <li>Constituie un compartiment, în întregime sau parțial închis, destinat să conțină mărfuri</li>
+      <li>Are un caracter <strong>permanent</strong> și este suficient de rezistent pentru a permite folosirea repetată</li>
+      <li>Este special construit pentru a facilita transportul mărfurilor <strong>fără descărcare și reîncărcare</strong>, prin unul sau mai multe moduri de transport</li>
+      <li>Este conceput pentru a putea fi ușor de <strong>manipulat</strong>, îndeosebi în timpul transbordării dintr-un mijloc de transport înalt</li>
+      <li>Are un volum interior de cel puțin <strong>1 metru cub</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- TAHOGRAF - OBLIGATII OPERATOR -->
+<div class="card" data-tags="important tahograf" id="c-taho">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Tahograf și limitator viteză — obligații operator (minim 3)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Să monteze, <strong>numai prin agenți economici autorizați</strong>, aparate tahograf și limitatoare de viteză</li>
+      <li>Să <strong>nu permită plecarea în cursă</strong> a vehiculelor care au limitatorul de viteză defect</li>
+      <li>Să nu permită <strong>intervenția persoanelor neautorizate</strong> asupra limitatoarelor de viteză</li>
+    </ul>
+    <div class="note">Tipuri tahograf: analog (vehicule fabricate înainte de 1 mai 2006), digital (fabricate după 1 mai 2006). Tahograful defect se înlocuiește cu <strong>digital</strong>.</div>
+  </div>
+</div>
+
+<!-- DIZOLVARE SA/SRL -->
+<div class="card" data-tags="important" id="c-diz">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Dizolvare + lichidare SA/SRL — etape + 4 cazuri în care tribunalul poate pronunța dizolvarea</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p><strong>Etape:</strong> dizolvarea → lichidarea → radierea</p>
+    <p><strong>Cazuri în care tribunalul poate pronunța dizolvarea (la solicitarea oricărei persoane interesate sau a ONRC):</strong></p>
+    <ul>
+      <li>Societatea nu mai are <strong>organe statutare constituite</strong></li>
+      <li>Societatea nu a depus la ONRC situațiile financiare anuale timp de <strong>cel puțin 6 luni</strong></li>
+      <li>Societatea nu a desfășurat <strong>nicio activitate economică</strong> timp de 3 ani</li>
+      <li>Societatea a <strong>pierdut jumătate din capitalul social</strong> și nu a luat măsuri de redresare</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ATP FURGON IZOTERM -->
+<div class="card" data-tags="important" id="c-atp">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">ATP — indicații minimale pe marca de identificare a unui furgon izoterm (minim 3–4)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Denumirea <strong>ATP</strong></li>
+      <li><strong>Țara fabricantului</strong></li>
+      <li><strong>Denumirea fabricantului</strong></li>
+      <li><strong>Data fabricației</strong></li>
+      <li>Seria/lotul fabricației</li>
+    </ul>
+    <p><strong>Controlul conformității ATP</strong> se face:</p>
+    <ul>
+      <li>Înaintea punerii în exploatare a mijlocului de transport</li>
+      <li>Periodic, cel puțin o dată la șase ani</li>
+      <li>De fiecare dată când autoritatea competentă a țării de înmatriculare o solicită</li>
+    </ul>
+  </div>
+</div>
+
+<!-- DREPT DE DISPOZITIE CMR -->
+<div class="card" data-tags="important cmr" id="c-disp">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">CMR — condiții exercitare drept de dispoziție (minim 2)</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Noile instrucțiuni să fie înscrise și în <strong>exemplarul 1 al CMR</strong></li>
+      <li>Să nu ducă la <strong>divizarea transportului</strong></li>
+      <li>Să suporte <strong>cheltuielile suplimentare</strong> ocazionate</li>
+      <li>Să nu <strong>perturbe activitatea</strong> transportatorului</li>
+    </ul>
+    <div class="note">Dreptul de dispoziție aparține expeditorului, dar poate fi transferat destinatarului (din momentul întocmirii CMR cu această mențiune sau din momentul descărcării).</div>
+  </div>
+</div>
+
+<!-- CEC PARTICIPANTI -->
+<div class="card" data-tags="financiar" id="c-cec">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Participanți circuitul cecului și rolul fiecăruia</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Participant</th><th>Rol</th></tr>
+      <tr><td><strong>Trăgătorul</strong></td><td>Cel care emite cecul (cel care plătește)</td></tr>
+      <tr><td><strong>Trasul</strong></td><td>Banca (instituția care va efectua plata)</td></tr>
+      <tr><td><strong>Beneficiarul</strong></td><td>Cel care încasează suma înscrisă pe cec</td></tr>
+    </table>
+    <div class="tip">Barare specială = apare denumirea unei bănci între bare → plata se face exclusiv prin acea bancă.</div>
+  </div>
+</div>
+
+<!-- CABOTAJ 10 -->
+<div class="card" data-tags="important" id="c-wiesb">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-4">4/6 studii</span></div>
+      <div class="q-text">Cabotaj Austria — Wiesbaden→Linz, ofertă Salzburg→Graz→Viena: ai dreptul?</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <p><strong>Situație tipică:</strong> Efectuezi cursă retur Wiesbaden–Linz (cu sau fără încărcătură). Ești în Austria și primești ofertă: Salzburg–Graz și Graz–Viena.</p>
+    <p><strong>Răspuns:</strong> Poți efectua <strong>maxim 3 operațiuni de cabotaj în 7 zile</strong> (dacă ai intrat cu încărcătură) sau <strong>1 cabotaj în 3 zile</strong> (dacă ai intrat fără încărcătură).</p>
+    <ul>
+      <li>Dacă ai intrat cu încărcătură → <strong>da</strong>, poți face ambele transporturi (2 din 3 permise)</li>
+      <li>Dacă ai intrat fără → <strong>nu</strong>, poți face doar 1 transport (Salzburg–Graz)</li>
+    </ul>
+    <p><strong>Perioada maximă pentru Salzburg–Graz:</strong> în cadrul celor <strong>7 zile</strong> calculate de la prima descărcare în Austria.</p>
+  </div>
+</div>
+
+<!-- BILET LA ORDIN -->
+<div class="card" data-tags="financiar" id="c-bilet">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Bilet la ordin — mențiuni esențiale</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li>Denumirea de <strong>bilet la ordin</strong></li>
+      <li><strong>Data emiterii</strong></li>
+      <li><strong>Scadența</strong></li>
+      <li>Mențiunea obligației personale și necondiționate de a <strong>plăti suma de bani</strong></li>
+      <li><strong>Numele beneficiarului</strong></li>
+      <li><strong>Semnătura subscriitorului</strong> sau aemitentului</li>
+      <li><strong>Locul de plată</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ROVINIETA -->
+<div class="card" data-tags="financiar" id="c-rovi">
+  <div class="card-header" onclick="toggle(this)">
+    <div>
+      <div class="q-meta"><span class="freq freq-3">3/6 studii</span></div>
+      <div class="q-text">Tariful de utilizare a infrastructurii rutiere (rovinieta) — structură</div>
+    </div>
+    <span class="chevron">⌄</span>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Vehicul</th><th>Structura tarifului</th></tr>
+      <tr><td>MTMA ≥ 12 tone</td><td>În funcție de <strong>durata de utilizare</strong> + <strong>numărul de axe</strong></td></tr>
+      <tr><td>MTMA &lt; 12 tone</td><td>În funcție de <strong>durata solicitată</strong></td></tr>
+    </table>
+    <div class="note">Valabilitate 90 de zile: ziua în curs + 89 de zile.</div>
+  </div>
+</div>
+
+</div>
+
+<div id="no-results" class="no-results hidden">Niciun rezultat pentru căutarea ta.</div>
+
+<script>
+var currentTab = 'all';
+function toggle(header) {
+  var card = header.parentElement;
+  card.classList.toggle('open');
+}
+function filterTab(btn, tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tabs button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  applyFilters();
+}
+function filterCards() { applyFilters(); }
+function applyFilters() {
+  var q = document.getElementById('search').value.toLowerCase();
+  var cards = document.querySelectorAll('.card');
+  var visible = 0;
+  cards.forEach(function(card){
+    var tags = (card.getAttribute('data-tags') || '');
+    var text = card.innerText.toLowerCase();
+    var tabMatch = currentTab === 'all' || tags.indexOf(currentTab) !== -1;
+    var searchMatch = q === '' || text.indexOf(q) !== -1;
+    if(tabMatch && searchMatch){ card.classList.remove('hidden'); visible++; }
+    else { card.classList.add('hidden'); }
+  });
+  document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+  document.querySelectorAll('.section-title').forEach(function(st){
+    var next = st.nextElementSibling;
+    var hasVisible = false;
+    while(next && !next.classList.contains('section-title')){
+      if(!next.classList.contains('hidden') && next.classList.contains('card')) hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    st.classList.toggle('hidden', !hasVisible);
+  });
+}
+</script>
+</body>
+</html>
